@@ -133,3 +133,4 @@ dmypy.json
 # Custom ignores
 .idea/
 .dont_push/
+*.json
