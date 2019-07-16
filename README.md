@@ -1,4 +1,4 @@
-# ExPaStack
+# ExPaStack [EPS]
 Extract, Pack, and Stack! Extract 3d obj/gltf/dae mesh names into a JSON format with unique ids.
 
 ## Usage
