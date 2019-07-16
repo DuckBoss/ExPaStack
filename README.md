@@ -1,4 +1,4 @@
 # ExPaStack
-Extract, Pack, and Stack your 3D Model .obj files into JSON.
+Extract, Pack, and Stack! Extract 3d obj mesh names into a JSON format with unique ids.
 
 ## WIP - This repository is not ready for usage.
