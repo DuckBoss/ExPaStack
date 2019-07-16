@@ -12,13 +12,18 @@ class PrimaryRunner:
         else:
             raise IncorrectInputError('One or more parameters have not been provided to the program.\n'
                                       'How to run: python3 <object_path> <optional_params>')
+
         self.parse_and_output(self.object_path)
 
     def parse_and_output(self, asset_path: str) -> None:
         file_content = FileAccessUtility.get_file_content(asset_path)
+        # print(file_content)
         ext_type = FileAccessUtility.get_file_extension(asset_path)
-        obj_names = FileAccessUtility.get_mesh_names(all_file_content_list=file_content, ext_type=ext_type)
+        # print(ext_type.name)
+        obj_names = FileAccessUtility.get_mesh_names(all_file_content=file_content, ext_type=ext_type)
+        # print(obj_names)
         obj_ids = EncodingUtility.encode_strings(obj_names)
+        # print(obj_ids)
         prepped_json = JSONUtility.prepare_for_json(obj_names, obj_ids)
         extra_check = JSONUtility.check_json(prepped_json)
         print(f'Error Checks Passed: {extra_check}')
