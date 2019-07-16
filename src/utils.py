@@ -2,13 +2,15 @@ from math import ceil
 from typing import List, Dict, Union
 from .exceptions import JSONPackingError, DuplicateObjectNameError, FileNotSupportedError
 import json
+import xml.etree.ElementTree as ET
 import hashlib
 from enum import Enum
 
 class CompatibilityUtility:
     class CompatibleFileExtension(Enum):
         OBJ = 0,
-        GLTF = 1
+        GLTF = 1,
+        DAE = 2
 
 class CliUtility:
     @staticmethod
@@ -56,7 +58,7 @@ class FileAccessUtility:
         return file_path[::-1].split('.')[1][::-1]
 
     @staticmethod
-    def get_file_content(file_name: str, ext_type: CompatibilityUtility.CompatibleFileExtension = None) -> Union[List[str], Dict[str, str]]:
+    def get_file_content(file_name: str, ext_type: CompatibilityUtility.CompatibleFileExtension = None) -> Union[List[str], Dict[str, str], ET.Element]:
         full_file_name = f'{file_name}'
         if ext_type is None:
             ext_type = FileAccessUtility.get_file_extension(file_name)
@@ -71,6 +73,9 @@ class FileAccessUtility:
             elif ext_type == CompatibilityUtility.CompatibleFileExtension.GLTF:
                 with open(f'{full_file_name}') as json_file:
                     all_lines = json.load(json_file)
+            elif ext_type == CompatibilityUtility.CompatibleFileExtension.DAE:
+                root = ET.parse(full_file_name).getroot()
+                return root
             else:
                 all_lines = []
         except FileNotFoundError:
@@ -80,7 +85,7 @@ class FileAccessUtility:
         return all_lines
 
     @staticmethod
-    def get_mesh_names(all_file_content: Union[Dict[str, str], List[str]] = None, ext_type: CompatibilityUtility.CompatibleFileExtension = CompatibilityUtility.CompatibleFileExtension.OBJ) -> List[str]:
+    def get_mesh_names(all_file_content: Union[Dict[str, str], List[str], ET.Element] = None, ext_type: CompatibilityUtility.CompatibleFileExtension = CompatibilityUtility.CompatibleFileExtension.OBJ) -> List[str]:
         all_obj_names = []
 
         if ext_type == CompatibilityUtility.CompatibleFileExtension.OBJ:
@@ -96,6 +101,11 @@ class FileAccessUtility:
             for item in json_content:
                 all_obj_names.append(item['name'])
             return all_obj_names
+        elif ext_type == CompatibilityUtility.CompatibleFileExtension.DAE:
+            for items in all_file_content:
+                for item in items:
+                    if 'geometry' in item.tag:
+                        all_obj_names.append(item.attrib['name'])
         return all_obj_names
 
 class JSONUtility:
