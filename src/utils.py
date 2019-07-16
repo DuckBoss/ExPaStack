@@ -137,7 +137,7 @@ class JSONUtility:
     @staticmethod
     def pack_as_json(json_prepared_data):
         try:
-            with open('data.json', 'w') as outfile:
+            with open('out.json', 'w') as outfile:
                 json.dump(json_prepared_data, outfile)
                 return True
         except Exception:
