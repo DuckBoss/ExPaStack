@@ -1,12 +1,14 @@
 from math import ceil
-from typing import List, Dict
+from typing import List, Dict, Union
 from .exceptions import JSONPackingError, DuplicateObjectNameError, FileNotSupportedError
 import json
 import hashlib
-
+from enum import Enum
 
 class CompatibilityUtility:
-    compatible_file_types = ['obj']
+    class CompatibleFileExtension(Enum):
+        OBJ = 0,
+        GLTF = 1
 
 class CliUtility:
     @staticmethod
@@ -42,8 +44,8 @@ class EncodingUtility:
 
 class FileAccessUtility:
     @staticmethod
-    def get_file_extension(file_path: str) -> str:
-        return file_path.split('/')[-1][::-1].split('.')[0][::-1]
+    def get_file_extension(file_path: str) -> CompatibilityUtility.CompatibleFileExtension:
+        return CompatibilityUtility.CompatibleFileExtension[f"{file_path.split('/')[-1][::-1].split('.')[0][::-1].upper()}"]
 
     @staticmethod
     def get_file_name(file_path: str) -> str:
@@ -54,17 +56,23 @@ class FileAccessUtility:
         return file_path[::-1].split('.')[1][::-1]
 
     @staticmethod
-    def get_file_content(file_name: str, ext_type: str = None) -> List[str]:
+    def get_file_content(file_name: str, ext_type: CompatibilityUtility.CompatibleFileExtension = None) -> Union[List[str], Dict[str, str]]:
         full_file_name = f'{file_name}'
         if ext_type is None:
             ext_type = FileAccessUtility.get_file_extension(file_name)
             file_name = FileAccessUtility.get_raw_file_name(file_name)
-            if ext_type not in CompatibilityUtility.compatible_file_types:
-                raise FileNotSupportedError(f'The file type: {ext_type} is currently not supported.')
-            full_file_name = f'{file_name}.{ext_type}'
+            if not any(x for x in CompatibilityUtility.CompatibleFileExtension if x == ext_type):
+                raise FileNotSupportedError(f'The file type: {ext_type.name} is currently not supported.')
+            full_file_name = f'{file_name}.{ext_type.name}'
         try:
-            with open(f'{full_file_name}', 'r') as obj_file:
-                all_lines = obj_file.readlines()
+            if ext_type == CompatibilityUtility.CompatibleFileExtension.OBJ:
+                with open(f'{full_file_name}', 'r') as obj_file:
+                    all_lines = obj_file.readlines()
+            elif ext_type == CompatibilityUtility.CompatibleFileExtension.GLTF:
+                with open(f'{full_file_name}') as json_file:
+                    all_lines = json.load(json_file)
+            else:
+                all_lines = []
         except FileNotFoundError:
             raise FileNotFoundError('The file could not be found!')
         except IsADirectoryError:
@@ -72,25 +80,23 @@ class FileAccessUtility:
         return all_lines
 
     @staticmethod
-    def get_mesh_names(all_file_content: str = None, all_file_content_list: List[str] = None, ext_type: str = 'obj') -> List[str]:
-        if all_file_content is None and all_file_content_list is None:
-            raise RuntimeError('File content must be passed in either a string or a string list format!')
-        if all_file_content and all_file_content_list:
-            raise RuntimeError('Only a string file content OR a list of string file content is allowed!')
+    def get_mesh_names(all_file_content: Union[Dict[str, str], List[str]] = None, ext_type: CompatibilityUtility.CompatibleFileExtension = CompatibilityUtility.CompatibleFileExtension.OBJ) -> List[str]:
         all_obj_names = []
 
-
-        if all_file_content:
-            all_file_content_list = all_file_content.split('\n')
-        if ext_type == 'obj':
-            for i, line in enumerate(all_file_content_list):
+        if ext_type == CompatibilityUtility.CompatibleFileExtension.OBJ:
+            for i, line in enumerate(all_file_content):
                 if line[0] == 'o':
                     new_mesh_name = line[2:].strip('\n')
                     if new_mesh_name in all_obj_names:
                         raise DuplicateObjectNameError('This mesh name exists multiple times in the obj file. Each mesh must be uniquely named!')
                     all_obj_names.append(line[2:].strip('\n'))
             return all_obj_names
-        return []
+        elif ext_type == CompatibilityUtility.CompatibleFileExtension.GLTF:
+            json_content = all_file_content['meshes']
+            for item in json_content:
+                all_obj_names.append(item['name'])
+            return all_obj_names
+        return all_obj_names
 
 class JSONUtility:
     @staticmethod
