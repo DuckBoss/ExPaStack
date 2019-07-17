@@ -161,6 +161,8 @@ class JSONUtility:
     @staticmethod
     def check_json(prepared_json_content: Dict[str, str]) -> bool:
         hash_list = []
+        if len(prepared_json_content.items()) == 0:
+            print("Warning: The resulting json output file is empty. If this isn't the intended behaviour, please check your keyword filters.")
         for i, val in prepared_json_content.items():
             if val['uid'] in hash_list:
                 return False
