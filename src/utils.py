@@ -1,5 +1,5 @@
 from math import ceil
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Tuple
 from .exceptions import JSONPackingError, DuplicateObjectNameError, FileNotSupportedError
 import json
 import xml.etree.ElementTree as ElementTree
@@ -14,6 +14,19 @@ class CompatibilityUtility:
         DAE = 2
 
 class CliUtility:
+    @staticmethod
+    def get_optional_parameters(args: List[str]) -> List[Tuple[str, str]]:
+        if len(args) > 1:
+            ret_list = []
+            for i, arg in enumerate(args[1:]):
+                if arg[:2] == '--':
+                    try:
+                        ret_list.append((arg[2:], args[i+2]))
+                    except IndexError:
+                        raise IndexError("The optional parameter must include a value!")
+            return ret_list
+        return [('','')]
+
     @staticmethod
     def get_cli_parameter(args: List[str]) -> str:
         if len(args) > 1:
@@ -111,7 +124,7 @@ class FileAccessUtility:
 
 class JSONUtility:
     @staticmethod
-    def prepare_for_json(obj_names: List[str], obj_ids: List[int]) -> Dict[str, str]:
+    def prepare_for_json(obj_names: List[str], obj_ids: List[int], filter_list: List[str], filter_type: str = 'include') -> Dict[str, str]:
         if len(obj_names) != len(obj_ids):
             from .exceptions import DataMismatchError
             raise DataMismatchError('The length of the mesh names and the encoded mesh ids are not the same.\n'
@@ -120,9 +133,23 @@ class JSONUtility:
         json_struct = {}
         for i, val in enumerate(obj_names):
             parsed_name = obj_names[i][::-1].split('_', 1)[1][::-1]
-            json_struct[f'{parsed_name}'] = {
-                'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
-            }
+            if len(filter_list) > 0:
+                if parsed_name in filter_list:
+                    if filter_type == 'exclude':
+                        continue
+                    else:
+                        json_struct[f'{parsed_name}'] = {
+                            'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
+                        }
+                else:
+                    if filter_type == 'exclude':
+                        json_struct[f'{parsed_name}'] = {
+                            'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
+                        }
+            else:
+                json_struct[f'{parsed_name}'] = {
+                    'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
+                }
         return json_struct
 
     @staticmethod
