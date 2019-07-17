@@ -29,7 +29,6 @@ class PrimaryRunner:
 
     def process_optional_params(self, optional_params):
         for i, tup in enumerate(optional_params):
-            print(tup)
             if tup[0] == 'keywords':
                 self.filter_list = tup[1].replace(' ', '').split(',')
                 print(f'Filter List: {self.filter_list}')
