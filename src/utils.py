@@ -135,7 +135,10 @@ class JSONUtility:
                                     'Please make sure the correct data sets are passed into the method.')
         json_struct = {}
         for i, val in enumerate(obj_names):
-            parsed_name = obj_names[i][::-1].split('_', 1)[1][::-1]
+            try:
+                parsed_name = obj_names[i][::-1].split('_', 1)[1][::-1]
+            except IndexError:
+                parsed_name = val
             if len(filter_list) > 0:
                 if parsed_name in filter_list:
                     if filter_type == 'exclude':
