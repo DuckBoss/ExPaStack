@@ -27,5 +27,5 @@ class PrimaryRunner:
         prepped_json = JSONUtility.prepare_for_json(obj_names, obj_ids)
         extra_check = JSONUtility.check_json(prepped_json)
         print(f'Error Checks Passed: {extra_check}')
-        output_json = JSONUtility.pack_as_json(prepped_json)
+        output_json = JSONUtility.pack_as_json(prepped_json, FileAccessUtility.get_file_name(asset_path))
         print(f'Successful JSON Output: {output_json}')
