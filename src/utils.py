@@ -61,7 +61,10 @@ class EncodingUtility:
 class FileAccessUtility:
     @staticmethod
     def get_file_extension(file_path: str) -> CompatibilityUtility.CompatibleFileExtension:
-        return CompatibilityUtility.CompatibleFileExtension[f"{file_path.split('/')[-1][::-1].split('.')[0][::-1].upper()}"]
+        try:
+            return CompatibilityUtility.CompatibleFileExtension[f"{file_path.split('/')[-1][::-1].split('.')[0][::-1].upper()}"]
+        except KeyError:
+            raise FileNotSupportedError(f"The file type: {file_path.split('/')[-1][::-1].split('.')[0][::-1].upper()} is currently not supported.")
 
     @staticmethod
     def get_file_name(file_path: str) -> str:
