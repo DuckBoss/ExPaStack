@@ -29,6 +29,12 @@ python3 expastack assets/cube.gltf --keywords "Cube1, Cube2" --filter-type "excl
 ```
 
 
+## Configuration Python File
+If you have many keywords to filter, then consider using the config.py file provided
+in the root directory.<br>
+This will help avoid long command line parameters.
+
+
 ## Example Output
 Generates a json file in the root directory.
 ```
