@@ -119,8 +119,8 @@ class JSONUtility:
                                     'Please make sure the correct data sets are passed into the method.')
         json_struct = {}
         for i, val in enumerate(obj_names):
-            json_struct[f'mesh_{i}'] = {
-                'name': obj_names[i],
+            parsed_name = obj_names[i][::-1].split('_', 1)[1][::-1]
+            json_struct[f'{parsed_name}'] = {
                 'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
             }
         return json_struct
@@ -135,9 +135,9 @@ class JSONUtility:
         return True
 
     @staticmethod
-    def pack_as_json(json_prepared_data):
+    def pack_as_json(json_prepared_data, file_name):
         try:
-            with open('out.json', 'w') as outfile:
+            with open(f'{file_name}.json', 'w') as outfile:
                 json.dump(json_prepared_data, outfile)
                 return True
         except Exception:
