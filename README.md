@@ -2,12 +2,61 @@
 Extract, Pack, and Stack! Extract 3d obj/gltf/dae mesh names into a JSON format with unique ids.
 
 ## Usage
+Basic Usage:
 ```
 python3 expastack assets/cube.obj
-python3 expastack assets/cube.gltf
-python3 expastack assets/cube.dae
+```
+Command-line parameters usage:
+```
+python3 expastack assets/cube.gltf --keywords "Cube1, Cube2" --filter-type "exclude"
 ```
 
+
+## Command Line Parameters
 ```
-Output: Generates a out.json file in the root directory.
+--keywords "..."
+--filter-type "include/exclude"
+```
+#### Keywords Parameter
+```
+--keywords "mesh_1, mesh_2" : Mesh names to filter in the output json
+```
+
+#### Filter Type Parameter
+```
+--filter-type "include/exclude" : Either filters out the keyword mesh names from the json output(exclude)
+                                  or it only includes the keyword mesh names in the json output. 
+```
+
+
+## Example Output
+Generates a json file in the root directory.
+```
+Input: python3 expastack cube.obj
+Output: cube.json
+{
+    "Cube"
+    {
+        "uid" = "aisodjiasd092941298401928jf"
+    }
+}
+ 
+ 
+Input: python3 expastack complex_object.obj --filter-type "include" --keywords "mesh1, mesh2"
+Output: complex_object.json
+{
+    "mesh1" { "uid" = <generated_uid> }
+    "mesh2" { "uid" = <generated_uid> }
+    (includes only mesh names in the filtered keywords)
+}
+ 
+ 
+Input: python3 expastack complex_object.obj --filter-type "exclude" --keywords "mesh1, mesh2"
+Output: complex_object.json
+{
+    ... { "uid" = <generated_uid }
+    ...
+    ...
+    ... (includes all mesh names except filtered keywords)
+}
 ```
