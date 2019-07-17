@@ -134,3 +134,4 @@ dmypy.json
 .idea/
 assets/dont_push/
 *.json
+*.blend
