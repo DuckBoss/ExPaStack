@@ -43,6 +43,7 @@ Output: cube.json
 {
     "Cube"
     {
+        "name" = "Cube",
         "uid" = "aisodjiasd092941298401928jf"
     }
 }
@@ -51,8 +52,8 @@ Output: cube.json
 Input: python3 expastack complex_object.obj --filter-type "include" --keywords "mesh1, mesh2"
 Output: complex_object.json
 {
-    "mesh1" { "uid" = <generated_uid> }
-    "mesh2" { "uid" = <generated_uid> }
+    "mesh1" { "name"= "mesh1", "uid" = <generated_uid> }
+    "mesh2" { "name"= "mesh2", "uid" = <generated_uid> }
     (includes only mesh names in the filtered keywords)
 }
 ```
@@ -60,7 +61,7 @@ Output: complex_object.json
 Input: python3 expastack complex_object.obj --filter-type "exclude" --keywords "mesh1, mesh2"
 Output: complex_object.json
 {
-    ... { "uid" = <generated_uid }
+    ... { "name" = <mesh_name>, "uid" = <generated_uid> }
     ...
     ...
     ... (includes all mesh names except filtered keywords)
