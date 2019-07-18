@@ -127,7 +127,7 @@ class FileAccessUtility:
 
 class JSONUtility:
     @staticmethod
-    def prepare_for_json(obj_names: List[str], obj_ids: List[int], filter_list: List[str], filter_type: str = 'include') -> Dict[str, str]:
+    def prepare_for_json(obj_names: List[str], obj_ids: List[int], filter_list: List[str], filter_type: str = 'include', include_header = False) -> Dict[str, str]:
         if len(obj_names) != len(obj_ids):
             from .exceptions import DataMismatchError
             raise DataMismatchError('The length of the mesh names and the encoded mesh ids are not the same.\n'
@@ -144,21 +144,40 @@ class JSONUtility:
                     if filter_type == 'exclude':
                         continue
                     else:
-                        json_struct[f'{parsed_name}'] = {
-                            'name': parsed_name,
-                            'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
-                        }
+                        if include_header:
+                            json_struct[f'{parsed_name}'] = {
+                                'name': parsed_name,
+                                'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
+                            }
+                        else:
+                            json_struct[f'mesh_{i}'] = {
+                                'name': parsed_name,
+                                'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
+                            }
                 else:
                     if filter_type == 'exclude':
-                        json_struct[f'{parsed_name}'] = {
-                            'name': parsed_name,
-                            'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
-                        }
+                        if include_header:
+                            json_struct[f'{parsed_name}'] = {
+                                'name': parsed_name,
+                                'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
+                            }
+                        else:
+                            json_struct[f'mesh_{i}'] = {
+                                'name': parsed_name,
+                                'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
+                            }
+
             else:
-                json_struct[f'{parsed_name}'] = {
-                    'name': parsed_name,
-                    'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
-                }
+                if include_header:
+                    json_struct[f'{parsed_name}'] = {
+                        'name': parsed_name,
+                        'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
+                    }
+                else:
+                    json_struct[f'mesh_{i}'] = {
+                        'name': parsed_name,
+                        'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
+                    }
         return json_struct
 
     @staticmethod
