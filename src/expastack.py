@@ -9,6 +9,8 @@ class PrimaryRunner:
 
     filter_list = []
     filter_type = ''
+    include_header = False
+
     def __init__(self):
         print('ExPaStack Initialized.')
 
@@ -37,6 +39,9 @@ class PrimaryRunner:
                 if not (self.filter_type == 'include' or self.filter_type == 'exclude'):
                     raise RuntimeError('The filter type must can only be "include" or "exclude"')
                 print(f'Filter Type: {self.filter_type}')
+            elif tup[0] == 'include-header':
+                self.include_header = bool(tup[1].replace(' ', '').strip())
+                print(f'Include Header: {self.include_header}')
 
     def parse_and_output(self, asset_path: str) -> None:
         file_content = FileAccessUtility.get_file_content(asset_path)
@@ -47,7 +52,7 @@ class PrimaryRunner:
         # print(obj_names)
         obj_ids = EncodingUtility.encode_strings(obj_names)
         # print(obj_ids)
-        prepped_json = JSONUtility.prepare_for_json(obj_names, obj_ids, self.filter_list, self.filter_type)
+        prepped_json = JSONUtility.prepare_for_json(obj_names, obj_ids, self.filter_list, self.filter_type, self.include_header)
         extra_check = JSONUtility.check_json(prepped_json)
         print(f'Error Checks Passed: {extra_check}')
         output_json = JSONUtility.pack_as_json(prepped_json, FileAccessUtility.get_file_name(asset_path))
