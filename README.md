@@ -1,6 +1,9 @@
 # ExPaStack [EPS]
 Extract, Pack, and Stack! Extract 3d obj/gltf/dae mesh names into a JSON format with unique ids.
 
+![GitHub](https://img.shields.io/github/license/DuckBoss/ExPaStack.svg?style=for-the-badge)
+
+
 ## Usage
 Basic Usage:
 ```
