@@ -145,15 +145,18 @@ class JSONUtility:
                         continue
                     else:
                         json_struct[f'{parsed_name}'] = {
+                            'name': parsed_name,
                             'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
                         }
                 else:
                     if filter_type == 'exclude':
                         json_struct[f'{parsed_name}'] = {
+                            'name': parsed_name,
                             'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
                         }
             else:
                 json_struct[f'{parsed_name}'] = {
+                    'name': parsed_name,
                     'uid': (hashlib.md5(str(obj_ids[i]).encode())).hexdigest()
                 }
         return json_struct
