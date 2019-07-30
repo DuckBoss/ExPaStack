@@ -30,6 +30,8 @@ class PrimaryRunner:
             self.filter_list = config.filter_list
         if self.map_names == {}:
             self.map_names = config.name_maps
+        if not self.include_header:
+            self.include_header = config.include_header
 
         self.parse_and_output(self.object_path)
 
