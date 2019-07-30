@@ -11,3 +11,7 @@ filter_type = 'include'
 # default value: False
 include_header = False
 
+
+# A dictionary of names (string: string) that can allow custom names for specific mesh parts
+# default value: name_maps = {}
+name_maps = {}
